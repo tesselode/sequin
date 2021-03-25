@@ -70,6 +70,10 @@ impl<T: Tweenable> Sequence<T> {
 
 	pub fn update(&mut self, delta_time: f32) {
 		if let State::Running { stage_index, time } = &mut self.state {
+			if self.stages.len() == 0 {
+				self.state = State::Finished;
+				return;
+			}
 			let mut current_stage = &self.stages[*stage_index];
 			// increment the current time
 			*time += delta_time;
