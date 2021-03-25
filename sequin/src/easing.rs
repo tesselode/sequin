@@ -1,4 +1,4 @@
-pub trait Easing {
+pub trait Easing: std::fmt::Debug {
 	fn ease(&self, x: f32) -> f32;
 }
 
