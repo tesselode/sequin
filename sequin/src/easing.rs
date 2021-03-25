@@ -1,4 +1,4 @@
-pub trait Easing: std::fmt::Debug {
+pub trait Easing: std::fmt::Debug + Send + Sync {
 	fn ease(&self, x: f32) -> f32;
 }
 
