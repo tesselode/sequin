@@ -30,6 +30,21 @@ impl Easing for Powf {
 }
 
 #[derive(Debug, Clone, Copy)]
+pub struct Back(pub f32);
+
+impl Back {
+	pub fn with_default_amount() -> Self {
+		Self(1.70158)
+	}
+}
+
+impl Easing for Back {
+	fn ease(&self, x: f32) -> f32 {
+		(self.0 + 1.0) * x.powi(3) - self.0 * x.powi(2)
+	}
+}
+
+#[derive(Debug, Clone, Copy)]
 pub struct Out<T: Easing>(pub T);
 
 impl<T: Easing> Easing for Out<T> {
