@@ -42,6 +42,10 @@ impl<T: Tweenable> Sequence<T> {
 		}
 	}
 
+	pub fn single(duration: f32, values: Range<T>, easing: impl Easing + 'static) -> Self {
+		Self::new(values.start).tween(duration, values.end, easing)
+	}
+
 	pub fn tween(mut self, duration: f32, target: T, easing: impl Easing + 'static) -> Self {
 		let start = self
 			.stages
