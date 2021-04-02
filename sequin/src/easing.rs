@@ -52,3 +52,18 @@ impl<T: Easing> Easing for Out<T> {
 		1.0 - self.0.ease(1.0 - x)
 	}
 }
+
+#[derive(Debug, Clone, Copy)]
+pub struct InOut<T: Easing>(pub T);
+
+impl<T: Easing> Easing for InOut<T> {
+	fn ease(&self, mut x: f32) -> f32 {
+		x *= 2.0;
+		if x < 1.0 {
+			0.5 * self.0.ease(x)
+		} else {
+			x = 2.0 - x;
+			0.5 * (1.0 - self.0.ease(x)) + 0.5
+		}
+	}
+}
