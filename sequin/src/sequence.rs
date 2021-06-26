@@ -118,4 +118,12 @@ impl<T: Tweenable> Sequence<T> {
 			false
 		}
 	}
+
+	pub fn reset(&mut self) {
+		self.state = State::Running {
+			stage_index: 0,
+			time: 0.0,
+		};
+		self.current_value = self.start;
+	}
 }
