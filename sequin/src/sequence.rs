@@ -95,9 +95,10 @@ impl<T: Tweenable> Sequence<T> {
 				}
 				current_stage = &self.stages[*stage_index];
 			}
-			self.current_value = current_stage.values.start
-				+ (current_stage.values.end - current_stage.values.start)
-					* current_stage.easing.ease(*time / current_stage.duration);
+			self.current_value = current_stage.values.start.lerp(
+				current_stage.values.end,
+				current_stage.easing.ease(*time / current_stage.duration),
+			);
 		}
 	}
 
