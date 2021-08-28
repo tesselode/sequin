@@ -3,7 +3,6 @@ use std::error::Error;
 use sequin::{
 	easing::{Out, Powi},
 	sequence::Sequence,
-	tween,
 };
 use tetra::{
 	graphics::{
@@ -11,7 +10,6 @@ use tetra::{
 		mesh::{Mesh, ShapeStyle},
 		Color,
 	},
-	input::Key,
 	math::Vec2,
 	time::get_delta_time,
 	Context, ContextBuilder, Event, State,
@@ -33,7 +31,7 @@ impl MainState {
 }
 
 impl State<Box<dyn Error>> for MainState {
-	fn event(&mut self, _ctx: &mut Context, event: Event) -> Result<(), Box<dyn Error>> {
+	fn event(&mut self, _ctx: &mut Context, _event: Event) -> Result<(), Box<dyn Error>> {
 		Ok(())
 	}
 

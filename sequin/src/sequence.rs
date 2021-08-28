@@ -5,10 +5,6 @@ use crate::{
 	tweenable::Tweenable,
 };
 
-fn tween<T: Tweenable, E: Easing + ?Sized>(values: &Range<T>, progress: f32, easing: &Box<E>) -> T {
-	values.start + (values.end - values.start) * easing.ease(progress)
-}
-
 #[derive(Debug)]
 pub struct Stage<T: Tweenable> {
 	pub duration: f32,
@@ -74,7 +70,7 @@ impl<T: Tweenable> Sequence<T> {
 
 	pub fn update(&mut self, delta_time: f32) {
 		if let State::Running { stage_index, time } = &mut self.state {
-			if self.stages.len() == 0 {
+			if self.stages.is_empty() {
 				self.state = State::Finished;
 				return;
 			}
@@ -99,11 +95,9 @@ impl<T: Tweenable> Sequence<T> {
 				}
 				current_stage = &self.stages[*stage_index];
 			}
-			self.current_value = tween(
-				&current_stage.values,
-				*time / current_stage.duration,
-				&current_stage.easing,
-			);
+			self.current_value = current_stage.values.start
+				+ (current_stage.values.end - current_stage.values.start)
+					* current_stage.easing.ease(*time / current_stage.duration);
 		}
 	}
 
@@ -112,11 +106,7 @@ impl<T: Tweenable> Sequence<T> {
 	}
 
 	pub fn finished(&self) -> bool {
-		if let State::Finished = self.state {
-			true
-		} else {
-			false
-		}
+		matches!(self.state, State::Finished)
 	}
 
 	pub fn reset(&mut self) {
