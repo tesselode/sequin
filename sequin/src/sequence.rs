@@ -1,4 +1,4 @@
-use std::ops::Range;
+use std::ops::RangeInclusive;
 
 use crate::{
 	easing::{Easing, Linear},
@@ -8,7 +8,7 @@ use crate::{
 #[derive(Debug)]
 pub struct Stage<T: Tweenable> {
 	pub duration: f32,
-	pub values: Range<T>,
+	pub values: RangeInclusive<T>,
 	pub easing: Box<dyn Easing>,
 }
 
@@ -38,18 +38,18 @@ impl<T: Tweenable> Sequence<T> {
 		}
 	}
 
-	pub fn single(duration: f32, values: Range<T>, easing: impl Easing + 'static) -> Self {
-		Self::new(values.start).tween(duration, values.end, easing)
+	pub fn single(duration: f32, values: RangeInclusive<T>, easing: impl Easing + 'static) -> Self {
+		Self::new(*values.start()).tween(duration, *values.end(), easing)
 	}
 
 	pub fn tween(mut self, duration: f32, target: T, easing: impl Easing + 'static) -> Self {
 		let start = self
 			.stages
 			.last()
-			.map_or(self.start, |stage| stage.values.end);
+			.map_or(self.start, |stage| *stage.values.end());
 		self.stages.push(Stage {
 			duration,
-			values: start..target,
+			values: start..=target,
 			easing: Box::new(easing),
 		});
 		self
@@ -59,10 +59,10 @@ impl<T: Tweenable> Sequence<T> {
 		let start = self
 			.stages
 			.last()
-			.map_or(self.start, |stage| stage.values.end);
+			.map_or(self.start, |stage| *stage.values.end());
 		self.stages.push(Stage {
 			duration,
-			values: start..start,
+			values: start..=start,
 			easing: Box::new(Linear),
 		});
 		self
@@ -90,13 +90,13 @@ impl<T: Tweenable> Sequence<T> {
 					// set the current value to the end value
 					// of the last stage; otherwise, the final
 					// value of the animation will be outdated
-					self.current_value = current_stage.values.end;
+					self.current_value = *current_stage.values.end();
 					return;
 				}
 				current_stage = &self.stages[*stage_index];
 			}
-			self.current_value = current_stage.values.start.lerp(
-				current_stage.values.end,
+			self.current_value = current_stage.values.start().lerp(
+				*current_stage.values.end(),
 				current_stage.easing.ease(*time / current_stage.duration),
 			);
 		}
